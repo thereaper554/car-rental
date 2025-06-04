@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Car Rental Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+  <div class="container mx-auto py-10 px-4">
+    <div class="bg-white p-6 rounded shadow-md">
+      <h1 class="text-2xl font-bold mb-4 text-center">Car Rental Lookup</h1>
+      <div class="flex flex-col md:flex-row items-center justify-center gap-4 mb-4">
+        <input type="number" id="userId" placeholder="Enter User ID"
+               class="px-4 py-2 border border-gray-300 rounded w-full md:w-64">
+        <button onclick="loadData()"
+                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+          Load Rentals
+        </button>
+      </div>
+      <div id="output" class="whitespace-pre-wrap bg-gray-50 p-4 rounded border border-gray-300 overflow-x-auto text-sm"></div>
+    </div>
+  </div>
+
+  <script>
+    async function loadData() {
+      const userId = document.getElementById("userId").value;
+      const output = document.getElementById("output");
+      output.textContent = "Loading...";
+      try {
+        const res = await fetch(`/api/rentals/${userId}`);
+        const data = await res.json();
+        if (data.error) {
+          output.textContent = "Error: " + data.error;
+        } else if (Array.isArray(data)) {
+          output.textContent = JSON.stringify(data, null, 2);
+        } else {
+          output.textContent = "Unexpected response: " + JSON.stringify(data);
+        }
+      } catch (err) {
+        output.textContent = "Request failed: " + err.message;
+      }
+    }
+  </script>
+</body>
+</html>
